@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>level-8</title>
+    <link rel="stylesheet" href="../css.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="rectangle middle" id="middleRect">
+            <div class="popup-content" style="background-color: skyblue;">
+                <div class="title">Level 8</div>
+                <div class="promt"></div>
+
+                <div class="space"></div>
+            </div>
+        </div>
+        <div class="rectangle bottom" id="bottomRect">详细信息</div>
+        <div class="rectangle hidden" id="hiddenRect">
+            <div class="column">
+                <p style="font-size: 22px; margin: 0%;">统计信息</p><br>
+                <span id="statistic">1</span>
+            </div>
+            <div class="column">
+                <p style="font-size: 22px; margin: 0%;">提示</p><br>
+                页面上有什么变化？
+
+            </div>
+        </div>
+    </div>
+    <script src="./count.js"></script>
+    <script>
+        var level = 8 + 0
+
+        async function getResult(flag) {
+            let newid = await count(level, flag);
+            var string = "共有" + newid[level] + "名挑战者来到了这个关卡。" + "目前已有" + newid[level + 1] + "名挑战者通过了这个关卡。" + "通过率为" + Math.round(newid[level + 1] * 100 / newid[level]) + "%";
+            document.getElementById("statistic").innerHTML = string
+        }
+
+        var save = getCookie('save');
+
+        if (save) {
+            if ((+save) + 1 == level - 0) {
+                level = +level
+                setCookie('save', level, 3650);
+                getResult(1);
+            }
+            else if ((+save) + 1 < level - 0) {
+
+
+                document.body.innerHTML = '<h1 style="  display: flex;  justify-content: center;  align-items: center;   height: 90vh; ">请按照正常顺序通关...欲速则不达</h1>';
+            }
+            else getResult(0);
+        } else {
+       
+            save = 1 + 0
+            setCookie('save', save, 3650);
+       
+            getResult(1);
+        }
+        document.getElementById('bottomRect').addEventListener('click', function () {
+            var bottomRect = document.getElementById('bottomRect');
+            var hiddenRect = document.getElementById('hiddenRect');
+            var middleRect = document.getElementById('middleRect');
+            bottomRect.classList.toggle('slide-up');
+            hiddenRect.classList.toggle('slide-up');
+            middleRect.classList.toggle('middle-slide-up');
+        });
+
+
+        function judge() {
+            var text = document.getElementById('input').value
+            if (hash(text) == 750946555) {
+                setTimeout(link, 50, 2 + 0);
+
+            }
+        }
+
+        function hash(str) {
+            var base = 1145141
+            var mod = 998244353
+            var ans = 0 + 0
+            for (let i = 0; i < str.length; i++) {
+                let code = str.charCodeAt(i);
+                ans = (ans + code) % mod
+                ans = ans * base % mod
+               
+            }
+      
+            return ans;
+        }
+
+        function cclick() {
+            console.log(document.getElementById('input').value);
+        }
+    </script>
+</body>
+
+</html>
