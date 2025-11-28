@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JKD Puzzle</title>
+  <link rel="stylesheet" href="style.css">
+  <!--   
+
+  创造性：
+  1. 采用了一种新模式，即多个页面（本作品中是15个页面）共同组成一个解谜游戏，作为个人作品，以网页的跳转实现关卡间的跳转
+  2. 解谜过程中融入了许多计算机科学导论课程所学的内容（如ip地址、IEEE754表示法、ASCII码以及html相关知识）
+  3. 采用了简约流畅的css设计，为每个元素都添加了动画以实现这种效果
+  4. 采用了fetch API跨域请求配合后端php脚本实现“详细信息”中访问量记录的功能
+  5. 采用了cookie实现存档功能，并在此基础上实现“顺序通关检测”和“通关彩蛋”功能
+  6. 为了保证游戏体验，在JavaScript代码中进行了必要的代码混淆
+  
+  -->
+</head>
+
+<body>
+  <!-- 调用后端 -->
+  <script src="count.js"></script>
+  <!-- 记录访问量 -->
+  <script>
+    var level = 0 + 0;
+    function setCookie(name, value, days) 
+    {
+      let expires = "";
+      if (days) 
+      {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    function getCookie(name) 
+    {
+      let namee = name + "=";
+      let ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) 
+      {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(namee) == 0) return c.substring(namee.length, c.length);
+      }
+      return null;
+    }
+    async function getResult() 
+    {
+      let newid;
+      var id = getCookie('id');
+      if (id) {
+        newid = await count(level, 0);
+      } else {
+        newid = await count(level, 1);
+        id = newid[level]
+        setCookie('id', id, 3650);
+      }
+      var string = "您是目前 " + newid[level] + " 位中第 " + id + " 位进入游戏的挑战者。" + "<br>" + "已有 " + newid[14] + " 人通关。";
+      var ssave = getCookie('save');
+      var rank = getCookie('finish');
+      if (ssave && rank) {
+        if ((+ssave) >= 14) {
+          string += "<br>" + "您是第 " + rank + " 位通关的挑战者。"
+        }
+      }
+      document.getElementById("statistic").innerHTML = string
+    }
+    getResult();
+  </script>
+
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <span id="closePopupBtn" class="close">&times;</span>
+      <p class="notice">
+        这是一个解谜游戏<br>
+        没有炫酷的动画和美妙的音乐<br>
+        有的只是极简主义和处处打磨的细节<br>
+        "Less is more."<br>
+        游戏中共有13个Level <br>
+        除Level 1和3 外所有答案均为<a style="color: red;">英文</a><br>
+        涉及内容大多与计科导课程所学相关（主要为web部分）<br>
+        <a style="color: red;">建议使用PC进行游戏（推荐Chrome浏览器）<br><br></a>
+        <a style="color: #480590;">Wish you a pleasant gaming experience.</a><br>
+        <a class="lazic" style="margin: 0% 0% 0% 40%; color: #480590;">——<a href="https://lazic.cn">lazic</a></a>
+      </p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="rectangle middle" id="middleRect">
+      <div class="title">JKD Puzzle</div>
+      <div class="box">
+        <div class="space"></div>
+        <div class="item" id="continue">继续</div>
+        <div class="item" id="start">开始</div>
+        <div class="item" id="rulebutton">规则</div>
+        <div class="space"></div>
+      </div>
+    </div>
+    <div class="rectangle bottom" id="bottomRect">详细信息</div>
+    <div class="rectangle hidden" id="hiddenRect">
+      <div class="column">
+        <p style="font-size: 22px; margin: 0% auto;">统计信息</p><br>
+        <span id="statistic"></span>
+      </div>
+      <div class="column">
+        <p style="font-size: 22px; margin: 0%;">致谢</p><br>
+        1.部分idea来源于一个故事工作室的NazoGame<br>
+        2.感谢张书恺、石曜铭、许天祺、尤俊翔、张钧玮等同学提出的改进建议<br>
+        3.感谢chatGPT-4o在CORS配置、CSS动画等方面提供的帮助<br>
+        4.感谢屏幕前的你qwq
+      </div>
+    </div>
+  </div>
+
+  <script>
+    //通关彩蛋
+    var save = getCookie('save');
+    if (save) {
+      if ((+save) >= 14) {
+        var div1 = document.getElementById('bottomRect');
+        div1.style.backgroundColor = 'gold';
+        div1.style.color = 'rgb(56, 11, 154)';
+        var div2 = document.getElementById('hiddenRect');
+        div2.style.backgroundColor = 'gold';
+        div2.style.color = 'rgb(56, 11, 154)';
+      }
+    }
+
+    //规则弹窗
+    const popup = document.getElementById('popup');
+    const openPopupBtn = document.getElementById('rulebutton');
+    const closePopupBtn = document.getElementById('closePopupBtn');
+    openPopupBtn.addEventListener('click', () => {
+      popup.style.visibility = 'visible';
+      popup.classList.add('show');
+    });
+    const closePopup = () => {
+      popup.classList.remove('show');
+      setTimeout(() => {
+        if (!popup.classList.contains('show')) {
+          popup.style.visibility = 'hidden';
+        }
+      }, 500);
+    };
+    closePopupBtn.addEventListener('click', closePopup);
+    window.addEventListener('click', (event) => {
+      if (event.target == popup) {
+        closePopup();
+      }
+    });
+
+    //详细信息
+    document.getElementById('bottomRect').addEventListener('click', function () {
+      var bottomRect = document.getElementById('bottomRect');
+      var hiddenRect = document.getElementById('hiddenRect');
+      var middleRect = document.getElementById('middleRect');
+      bottomRect.classList.toggle('slide-up');
+      hiddenRect.classList.toggle('slide-up');
+      middleRect.classList.toggle('middle-slide-up');
+    });
+
+    //存档跳转
+    document.getElementById('continue').addEventListener('click', function () {
+      //    localStorage因奇怪的问题被弃用
+      var save = getCookie('save');
+      console.log(save)
+      if (save) {
+            console.log('Cookie value:', save);
+        } else {
+            console.log('Cookie not found');
+            save = 1+0
+            setCookie('save', save, 3650);
+            console.log('Cookie set successfully');
+        }
+      fetch('https://ii.lazic.cn/fetch_data.php')
+                .then(response => response.json())
+                .then(data => {
+                   
+                  console.log(data.element)
+                  window.location.href = data.element[save];       
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+
+    //开始键
+    document.getElementById('start').addEventListener('click', function () {
+      window.location.href = './level-1/';
+    });
+  </script>
+
+</body>
+</html>

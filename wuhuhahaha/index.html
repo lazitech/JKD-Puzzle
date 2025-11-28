@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Congratulations!</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <script src="../count.js"></script>
+  <script>
+    var level =14+0;
+    function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        var save = getCookie('save');
+        console.log('save', save)
+        if (save) {
+            if ((+save)+1==level-0) {
+                console.log('Cookie value:', save);
+                level = +level
+                setCookie('save', level, 3650);
+                console.log(level, 'Cookie set successfully');
+            }
+            if((+save)+1<level-0)
+            {
+                console.log('Ahhhhhhhhhh')
+      
+                document.body.innerHTML = '<h1 style="  display: flex;  justify-content: center;  align-items: center;   height: 90vh; ">请按照正常顺序通关...欲速则不达</h1>';
+            }
+        } else {
+            console.log('Cookie not found');
+            save = 1 + 0
+            setCookie('save', save, 3650);
+            console.log('Cookie set successfully');
+        }
+
+        async function getResult() {
+        let newid ;
+        console.log(newid)  
+        var id = getCookie('finish');
+        if (id) {
+            console.log('Cookie value:', id);
+            newid = await count(level,0);
+        } else {
+          if((+save)+1>=level-0)
+          {
+            console.log('Cookie not found');
+            newid = await count(level,1);
+            id=newid[level]
+            setCookie('finish', id, 3650);
+            console.log('Cookie set successfully');
+          }
+        }
+        var string = "您是目前 " + newid[level] + " 位中第 "+ id + " 位通关的挑战者。" +"<br>"+"<br>"+"点击标题以回到主页。";
+      console.log(id)
+      document.getElementById("statistic").innerHTML=string
+    }
+    getResult();
+    console.log('Successfully count!')
+
+  </script>
+  
+
+  <div class="container">
+    <div class="rectangle middle" id="middleRect">
+      <div class="space"></div>
+      <div class="space"></div>
+      <div class="title" style="color: red;" id="link1">Congratulations! </div>
+      <div class="title" id="link2">恭喜通关</div>
+   
+    </div>
+    <div class="rectangle bottom" id="bottomRect">详细信息</div>
+    <div class="rectangle hidden" id="hiddenRect">
+        <div class="column">
+            <p style="font-size: 22px; margin: 0% auto;">统计信息</p><br>
+            <span id="statistic">
+                         1<br>
+            2<br>
+            3
+            </span> 
+
+        </div>
+        <div class="column">
+            <p style="font-size: 22px; margin: 0%;">致谢</p><br>
+                1.部分idea借鉴自 一个故事工作室 One Story Studio 的 NazoGame ，这种借鉴仅用于学习，并未用于任何商业目的，且本网站所有代码均为本人独立编写，特此声明<br>
+                2.感谢屏幕前的你qwq
+        </div>
+    </div>
+  </div>
+
+
+
+
+
+
+  <script>
+
+
+    document.getElementById('bottomRect').addEventListener('click', function () {
+      var bottomRect = document.getElementById('bottomRect');
+      var hiddenRect = document.getElementById('hiddenRect');
+      var middleRect = document.getElementById('middleRect');
+
+      bottomRect.classList.toggle('slide-up');
+      hiddenRect.classList.toggle('slide-up');
+      middleRect.classList.toggle('middle-slide-up');
+    });
+
+    document.getElementById('link1').addEventListener('click',function (){
+      window.location.href = '../';
+    });
+
+    document.getElementById('link2').addEventListener('click',function (){
+      window.location.href = '../';
+    });
+
+
+  </script>
+
+</body>
+
+</html>
